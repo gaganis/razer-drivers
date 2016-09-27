@@ -15,6 +15,7 @@ Each event is in the format of
 import datetime
 import fcntl
 import json
+import errno
 import logging
 import os
 import random
@@ -135,13 +136,22 @@ class KeyWatcher(threading.Thread):
         for event_fd in event_file_map.keys():
             poll_object.register(event_fd, select.EPOLLIN | select.EPOLLPRI)
 
+        # One less if statement ;)
+        if self._use_epoll:
+            read_func = lambda: self._poll_epoll(poll_object, event_file_map)
+        else:
+            read_func = lambda: self._poll_read()
+
         # Loop
         while not self._shutdown:
-            # epoll is nice but it wasn't getting events properly :(
-            if self._use_epoll:
-                self._poll_epoll(poll_object, event_file_map)
-            else:
-                self._poll_read()
+            try:
+                read_func()
+            except OSError as err:
+                if err.errno == errno.ENODEV:
+                    self._logger.info("Device missing, stopping KeyWatcher thread")
+                    break
+                else:
+                    raise
 
             time.sleep(SPIN_SLEEP)
 
