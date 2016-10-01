@@ -1,8 +1,9 @@
+#!/usr/bin/env python3
 import os
 import sys
 import argparse
 import struct
-from razer_daemon.keyboard import EVENT_MAPPING, TARTARUS_EVENT_MAPPING
+from razer_daemon.keyboard import EVENT_MAPPING, TARTARUS_EVENT_MAPPING, ORBWEAVER_EVENT_MAPPING
 
 EVENT_FORMAT = '@llHHI'
 EVENT_SIZE = struct.calcsize(EVENT_FORMAT)
@@ -28,6 +29,8 @@ def loop_on_event(event_file, mapping):
                     value = 'REPEAT'
 
                 code = mapping.get(code, code)
+                if isinstance(code, str):
+                    code = "'{0}'".format(code)
 
                 print("Type: EV_KEY, Code: {1}, Value: {2}".format(ev_type, code, value))
             else:
@@ -38,6 +41,7 @@ def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('event_file', metavar='EVENT_FILE', type=str, help="Device event file like \"/dev/input/by-id/usb-Razer_Razer_BlackWidow_Chroma-event-kbd\"")
     parser.add_argument('--tartarus', action='store_true', help='Use the tartarus event mapping instead')
+    parser.add_argument('--orbweaver', action='store_true', help='Use the orbweaver event mapping instead')
 
     return parser.parse_args()
 
@@ -50,6 +54,8 @@ def run():
 
     if args.tartarus:
         mapping = TARTARUS_EVENT_MAPPING
+    elif args.orbweaver:
+        mapping = ORBWEAVER_EVENT_MAPPING
     else:
         mapping = EVENT_MAPPING
 
