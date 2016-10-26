@@ -225,6 +225,7 @@ void razer_get_serial(struct usb_device *usb_dev, unsigned char* serial_string)
     int retval;
     int i;
     if(usb_dev->descriptor.idProduct == USB_DEVICE_ID_RAZER_BLADE_STEALTH ||
+       usb_dev->descriptor.idProduct == USB_DEVICE_ID_RAZER_BLADE_QHD ||
        usb_dev->descriptor.idProduct == USB_DEVICE_ID_RAZER_BLADE_STEALTH_LATE_2016)
     {
         // Stealth does not have serial via USB, so get it from DMI table
@@ -680,6 +681,7 @@ int razer_set_custom_mode(struct usb_device *usb_dev)
 
     if(usb_dev->descriptor.idProduct == USB_DEVICE_ID_RAZER_BLACKWIDOW_ULTIMATE_2016 ||
        usb_dev->descriptor.idProduct == USB_DEVICE_ID_RAZER_BLADE_STEALTH ||
+       usb_dev->descriptor.idProduct == USB_DEVICE_ID_RAZER_BLADE_QHD ||
        usb_dev->descriptor.idProduct == USB_DEVICE_ID_RAZER_BLADE_STEALTH_LATE_2016)
     {
         report.arguments[1] = 0x00; /*Data frame ID ?*/
@@ -811,6 +813,7 @@ int razer_set_key_row(struct usb_device *usb_dev, unsigned char row_index, unsig
     // Ultimate 2016 and stealth use 0x80
     if(usb_dev->descriptor.idProduct == USB_DEVICE_ID_RAZER_BLACKWIDOW_ULTIMATE_2016 ||
        usb_dev->descriptor.idProduct == USB_DEVICE_ID_RAZER_BLADE_STEALTH ||
+       usb_dev->descriptor.idProduct == USB_DEVICE_ID_RAZER_BLADE_QHD ||
        usb_dev->descriptor.idProduct == USB_DEVICE_ID_RAZER_BLADE_STEALTH_LATE_2016)
     {
         report.transaction_id.id = 0x80;
@@ -818,6 +821,7 @@ int razer_set_key_row(struct usb_device *usb_dev, unsigned char row_index, unsig
 
     // Added this to handle variable row lengths
     if(usb_dev->descriptor.idProduct == USB_DEVICE_ID_RAZER_BLADE_STEALTH ||
+       usb_dev->descriptor.idProduct == USB_DEVICE_ID_RAZER_BLADE_QHD ||
        usb_dev->descriptor.idProduct == USB_DEVICE_ID_RAZER_BLADE_STEALTH_LATE_2016)
     {
         row_length = RAZER_STEALTH_ROW_LEN;
@@ -872,6 +876,7 @@ int razer_set_brightness(struct usb_device *usb_dev, unsigned char brightness)
     report.arguments[0] = 0x01; // LED Class, profile?
 
     if(usb_dev->descriptor.idProduct == USB_DEVICE_ID_RAZER_BLADE_STEALTH ||
+       usb_dev->descriptor.idProduct == USB_DEVICE_ID_RAZER_BLADE_QHD ||
        usb_dev->descriptor.idProduct == USB_DEVICE_ID_RAZER_BLADE_STEALTH_LATE_2016) {
         report.data_size = 0x02;
         report.command_class = 0x0E;
@@ -890,7 +895,7 @@ int razer_set_brightness(struct usb_device *usb_dev, unsigned char brightness)
               usb_dev->descriptor.idProduct == USB_DEVICE_ID_RAZER_BLACKWIDOW_X_CHROMA_TE ||
               usb_dev->descriptor.idProduct == USB_DEVICE_ID_RAZER_BLACKWIDOW_ULTIMATE_2016 ||
               usb_dev->descriptor.idProduct == USB_DEVICE_ID_RAZER_BLADE_STEALTH ||
-	      usb_dev->descriptor.idProduct == USB_DEVICE_ID_RAZER_BLADE_STEALTH_LATE_2016 ||
+              usb_dev->descriptor.idProduct == USB_DEVICE_ID_RAZER_BLADE_STEALTH_LATE_2016 ||
               usb_dev->descriptor.idProduct == USB_DEVICE_ID_RAZER_TARTARUS_CHROMA)
     {
         report.arguments[1] = 0x05;/* Backlight LED */
@@ -937,7 +942,8 @@ int razer_get_brightness(struct usb_device *usb_dev)
               usb_dev->descriptor.idProduct == USB_DEVICE_ID_RAZER_BLACKWIDOW_X_CHROMA_TE ||
               usb_dev->descriptor.idProduct == USB_DEVICE_ID_RAZER_BLACKWIDOW_ULTIMATE_2016 ||
               usb_dev->descriptor.idProduct == USB_DEVICE_ID_RAZER_BLADE_STEALTH ||
-	      usb_dev->descriptor.idProduct == USB_DEVICE_ID_RAZER_BLADE_STEALTH_LATE_2016 ||
+              usb_dev->descriptor.idProduct == USB_DEVICE_ID_RAZER_BLADE_QHD ||
+              usb_dev->descriptor.idProduct == USB_DEVICE_ID_RAZER_BLADE_STEALTH_LATE_2016 ||
               usb_dev->descriptor.idProduct == USB_DEVICE_ID_RAZER_TARTARUS_CHROMA)
     {
         request_report.arguments[1] = 0x05;/* Backlight LED */
@@ -1466,8 +1472,9 @@ static ssize_t razer_attr_write_mode_static(struct device *dev, struct device_at
               usb_dev->descriptor.idProduct == USB_DEVICE_ID_RAZER_BLACKWIDOW_X_CHROMA ||
               usb_dev->descriptor.idProduct == USB_DEVICE_ID_RAZER_BLACKWIDOW_X_CHROMA_TE ||
               usb_dev->descriptor.idProduct == USB_DEVICE_ID_RAZER_BLACKWIDOW_ULTIMATE_2016 ||
+              usb_dev->descriptor.idProduct == USB_DEVICE_ID_RAZER_BLADE_QHD ||
               usb_dev->descriptor.idProduct == USB_DEVICE_ID_RAZER_BLADE_STEALTH ||
-	      usb_dev->descriptor.idProduct == USB_DEVICE_ID_RAZER_BLADE_STEALTH_LATE_2016 ||
+              usb_dev->descriptor.idProduct == USB_DEVICE_ID_RAZER_BLADE_STEALTH_LATE_2016 ||
               usb_dev->descriptor.idProduct == USB_DEVICE_ID_RAZER_TARTARUS_CHROMA)
     {
         // Set BlackWidow Chroma to static colour
@@ -1557,9 +1564,13 @@ static ssize_t razer_attr_read_device_type(struct device *dev, struct device_att
             device_type = "Razer Blade Stealth\n";
             break;
 
-	case USB_DEVICE_ID_RAZER_BLADE_STEALTH_LATE_2016:
-	    device_type = "New Razer Blade Stealth (Late 2016)\n";
-	    break;
+        case USB_DEVICE_ID_RAZER_BLADE_STEALTH_LATE_2016:
+            device_type = "New Razer Blade Stealth (Late 2016)\n";
+            break;
+
+        case USB_DEVICE_ID_RAZER_BLADE_QHD:
+            device_type = "Razer Blade QHD\n";
+            break;
         
         case USB_DEVICE_ID_RAZER_TARTARUS_CHROMA:
             device_type = "Razer Tartarus Chroma\n";
@@ -1855,6 +1866,23 @@ static int razer_kbd_probe(struct hid_device *hdev, const struct hid_device_id *
             CREATE_DEVICE_FILE(&hdev->dev, &dev_attr_set_logo);
             CREATE_DEVICE_FILE(&hdev->dev, &dev_attr_set_fn_toggle);
             
+        } else if(usb_dev->descriptor.idProduct == USB_DEVICE_ID_RAZER_BLADE_QHD)
+        {
+            // Razer Stealth (Laptop)
+            CREATE_DEVICE_FILE(&hdev->dev, &dev_attr_mode_wave);
+            CREATE_DEVICE_FILE(&hdev->dev, &dev_attr_mode_spectrum);
+            CREATE_DEVICE_FILE(&hdev->dev, &dev_attr_mode_none);
+            CREATE_DEVICE_FILE(&hdev->dev, &dev_attr_mode_reactive);
+            CREATE_DEVICE_FILE(&hdev->dev, &dev_attr_mode_breath);
+            CREATE_DEVICE_FILE(&hdev->dev, &dev_attr_mode_static);
+            CREATE_DEVICE_FILE(&hdev->dev, &dev_attr_mode_custom);
+            CREATE_DEVICE_FILE(&hdev->dev, &dev_attr_temp_clear_row);
+            CREATE_DEVICE_FILE(&hdev->dev, &dev_attr_set_key_row);
+            CREATE_DEVICE_FILE(&hdev->dev, &dev_attr_mode_game);
+            CREATE_DEVICE_FILE(&hdev->dev, &dev_attr_set_logo);
+            CREATE_DEVICE_FILE(&hdev->dev, &dev_attr_set_fn_toggle);
+            CREATE_DEVICE_FILE(&hdev->dev, &dev_attr_mode_starlight);
+            
         } else if(usb_dev->descriptor.idProduct == USB_DEVICE_ID_RAZER_TARTARUS_CHROMA)
         {
             // Razer Tartarus
@@ -1985,6 +2013,24 @@ static void razer_kbd_disconnect(struct hid_device *hdev)
 			device_remove_file(&hdev->dev, &dev_attr_set_fn_toggle);        // Sets wether FN is requires for F-Keys
 			
 			
+		} else if(usb_dev->descriptor.idProduct == USB_DEVICE_ID_RAZER_BLADE_QHD)
+		{
+			// Razer Stealth (Laptop)
+			device_remove_file(&hdev->dev, &dev_attr_mode_wave);            // Wave effect
+			device_remove_file(&hdev->dev, &dev_attr_mode_spectrum);        // Spectrum effect
+			device_remove_file(&hdev->dev, &dev_attr_mode_none);            // No effect
+			device_remove_file(&hdev->dev, &dev_attr_mode_reactive);        // Reactive effect
+			device_remove_file(&hdev->dev, &dev_attr_mode_breath);          // Breathing effect
+			device_remove_file(&hdev->dev, &dev_attr_mode_static);          // Static effect
+			device_remove_file(&hdev->dev, &dev_attr_mode_custom);          // Custom effect
+			device_remove_file(&hdev->dev, &dev_attr_temp_clear_row);       // Clear row
+			device_remove_file(&hdev->dev, &dev_attr_set_key_row);          // Set LED matrix
+			//device_remove_file(&hdev->dev, &dev_attr_mode_game);            // Enable game mode & LED
+			device_remove_file(&hdev->dev, &dev_attr_set_logo);             // Enable/Disable the logo
+			device_remove_file(&hdev->dev, &dev_attr_set_fn_toggle);        // Sets wether FN is requires for F-Keys
+			device_remove_file(&hdev->dev, &dev_attr_mode_starlight);       // Starlight effect
+			
+			
 		} else if(usb_dev->descriptor.idProduct == USB_DEVICE_ID_RAZER_TARTARUS_CHROMA) {
 			// Razer Tartarus Chroma
 			device_remove_file(&hdev->dev, &dev_attr_mode_spectrum);        // Spectrum effect
@@ -2052,6 +2098,7 @@ static const struct hid_device_id razer_devices[] = {
     { HID_USB_DEVICE(USB_VENDOR_ID_RAZER,USB_DEVICE_ID_RAZER_BLACKWIDOW_ULTIMATE_2013) },
     { HID_USB_DEVICE(USB_VENDOR_ID_RAZER,USB_DEVICE_ID_RAZER_BLACKWIDOW_ULTIMATE_2016) },
     { HID_USB_DEVICE(USB_VENDOR_ID_RAZER,USB_DEVICE_ID_RAZER_BLADE_STEALTH) },
+    { HID_USB_DEVICE(USB_VENDOR_ID_RAZER,USB_DEVICE_ID_RAZER_BLADE_QHD) },
     { HID_USB_DEVICE(USB_VENDOR_ID_RAZER,USB_DEVICE_ID_RAZER_BLADE_STEALTH_LATE_2016) },
     { HID_USB_DEVICE(USB_VENDOR_ID_RAZER,USB_DEVICE_ID_RAZER_TARTARUS_CHROMA) },
     { HID_USB_DEVICE(USB_VENDOR_ID_RAZER,USB_DEVICE_ID_RAZER_BLACKWIDOW_CHROMA) },
