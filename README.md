@@ -12,8 +12,8 @@ Website: [Here](https://terrycain.github.io/razer-drivers/)
 ### Keyboards
 | Device                                        | Driver | Daemon |
 | --------------------------------------------- | ------ | ------ |
-| Razer BlackWidow Classic                      |   ✔    |        |
-| Razer BlackWidow Ultimate 2012                |   ✔    |        |
+| Razer BlackWidow Classic                      |   ✔    |   ✔    |
+| Razer BlackWidow Ultimate 2012                |   ✔    |   ✔    |
 | Razer BlackWidow Ultimate 2013                |   ✔    |   ✔    |
 | Razer BlackWidow Ultimate 2016                |   ✔    |   ✔    |
 | Razer BlackWidow Chroma                       |   ✔    |   ✔    |

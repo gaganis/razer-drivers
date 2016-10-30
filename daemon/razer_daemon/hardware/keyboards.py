@@ -73,9 +73,21 @@ class RazerBlackWidow2013(_MacroKeyboard):
 
     USB_VID = 0x1532
     USB_PID = 0x011A
-    HAS_MATRIX = True
+    HAS_MATRIX = False
     DEDICATED_MACRO_KEYS = True
-    MATRIX_DIMS = [6, 22] # 6 Rows, 22 Cols
+    MATRIX_DIMS = [6, 22]  # 6 Rows, 22 Cols
+    METHODS = ['get_firmware', 'get_matrix_dims', 'has_matrix', 'get_brightness', 'enable_macro_keys', 'set_brightness', 'get_device_name', 'get_device_type_keyboard', 'get_game_mode', 'set_game_mode', 'set_macro_mode', 'get_macro_mode',
+               'get_macro_effect', 'set_macro_effect', 'bw_get_effect', 'bw_set_pulsate', 'bw_set_static', 'get_macros', 'delete_macro', 'add_macro']
+
+
+class RazerBlackWidow2012(_MacroKeyboard):
+    EVENT_FILE_REGEX = re.compile(r'.*Razer_BlackWidow_Ultimate(-if01)?-event-kbd')
+
+    USB_VID = 0x1532
+    USB_PID = 0x010D
+    HAS_MATRIX = False
+    DEDICATED_MACRO_KEYS = True
+    MATRIX_DIMS = [6, 22]  # 6 Rows, 22 Cols
     METHODS = ['get_firmware', 'get_matrix_dims', 'has_matrix', 'get_brightness', 'enable_macro_keys', 'set_brightness', 'get_device_name', 'get_device_type_keyboard', 'get_game_mode', 'set_game_mode', 'set_macro_mode', 'get_macro_mode',
                'get_macro_effect', 'set_macro_effect', 'bw_get_effect', 'bw_set_pulsate', 'bw_set_static', 'get_macros', 'delete_macro', 'add_macro']
 
